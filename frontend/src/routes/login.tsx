@@ -10,7 +10,10 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Sign in — Taskline" },
-      { name: "description", content: "Sign in to Taskline to manage and track your team's tasks." },
+      {
+        name: "description",
+        content: "Sign in to Taskline to manage and track your team's tasks.",
+      },
       { property: "og:title", content: "Sign in — Taskline" },
       {
         property: "og:description",
@@ -53,11 +56,21 @@ function LoginPage() {
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="you@company.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="••••••••" required />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
           </div>
           <Button type="submit" className="w-full">
             {mode === "login" ? "Sign in" : "Create account"}
@@ -67,7 +80,9 @@ function LoginPage() {
             onClick={() => setMode(mode === "login" ? "register" : "login")}
             className="w-full text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            {mode === "login" ? "No account? Register" : "Already registered? Sign in"}
+            {mode === "login"
+              ? "No account? Register"
+              : "Already registered? Sign in"}
           </button>
         </form>
       </div>

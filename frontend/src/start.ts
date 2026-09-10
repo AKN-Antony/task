@@ -1,4 +1,8 @@
-import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
+import {
+  createStart,
+  createCsrfMiddleware,
+  createMiddleware,
+} from "@tanstack/react-start";
 
 import { renderErrorPage } from "./server/error-page";
 

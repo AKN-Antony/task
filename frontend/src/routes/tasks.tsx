@@ -19,12 +19,14 @@ export const Route = createFileRoute("/tasks")({
       { title: "All tasks — Taskline" },
       {
         name: "description",
-        content: "Browse every task and filter instantly by status, priority or assignee.",
+        content:
+          "Browse every task and filter instantly by status, priority or assignee.",
       },
       { property: "og:title", content: "All tasks — Taskline" },
       {
         property: "og:description",
-        content: "Browse every task and filter instantly by status, priority or assignee.",
+        content:
+          "Browse every task and filter instantly by status, priority or assignee.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -88,7 +90,9 @@ function TasksPage() {
 
   return (
     <AppShell>
-      <h1 className="font-display text-3xl font-semibold tracking-tight">All tasks</h1>
+      <h1 className="font-display text-3xl font-semibold tracking-tight">
+        All tasks
+      </h1>
       <p className="mt-2 text-sm text-muted-foreground">
         {tasks.length} of {MOCK_TASKS.length} tasks shown
       </p>
@@ -103,8 +107,18 @@ function TasksPage() {
             className="pl-9"
           />
         </div>
-        <FilterRow label="Status" options={STATUSES} value={status} onChange={setStatus} />
-        <FilterRow label="Priority" options={PRIORITIES} value={priority} onChange={setPriority} />
+        <FilterRow
+          label="Status"
+          options={STATUSES}
+          value={status}
+          onChange={setStatus}
+        />
+        <FilterRow
+          label="Priority"
+          options={PRIORITIES}
+          value={priority}
+          onChange={setPriority}
+        />
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">

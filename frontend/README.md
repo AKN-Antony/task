@@ -27,6 +27,7 @@ Ensure you have [Bun](https://bun.sh/) installed on your machine.
 ### Installation
 
 1. Clone the repository and navigate to the project directory:
+
    ```bash
    cd task-flow
    ```

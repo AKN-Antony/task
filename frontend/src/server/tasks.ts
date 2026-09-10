@@ -41,7 +41,8 @@ export const MOCK_TASKS: Task[] = [
   {
     id: 1,
     title: "Ship recurring task scheduler",
-    description: "Daily/weekly/monthly recurrence with auto-created follow-ups.",
+    description:
+      "Daily/weekly/monthly recurrence with auto-created follow-ups.",
     priority: "High",
     due_date: day(0),
     status: "In Progress",
@@ -131,7 +132,10 @@ export const MOCK_TASKS: Task[] = [
 ];
 
 export function isOverdue(task: Task) {
-  return task.status !== "Completed" && new Date(task.due_date).getTime() < Date.now();
+  return (
+    task.status !== "Completed" &&
+    new Date(task.due_date).getTime() < Date.now()
+  );
 }
 
 export interface TaskFilters {

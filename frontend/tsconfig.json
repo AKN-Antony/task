@@ -1,5 +1,10 @@
 {
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "eslint.config.js"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "eslint.config.js"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
@@ -24,10 +29,10 @@
     "exactOptionalPropertyTypes": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@/components/*": ["./src/frontend/components/*"],
-      "@/hooks/*": ["./src/frontend/hooks/*"],
-      "@/assets/*": ["./src/frontend/assets/*"],
-      "@/lib/utils": ["./src/frontend/lib/utils.ts"],
+      "@/components/*": ["./src/components/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/assets/*": ["./src/assets/*"],
+      "@/lib/utils": ["./src/lib/utils.ts"],
       "@/*": ["./src/*"]
     }
   }
