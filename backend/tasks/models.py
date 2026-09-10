@@ -28,6 +28,9 @@ class Task(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='created_tasks', on_delete=models.CASCADE)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='assigned_tasks', on_delete=models.SET_NULL, null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='tasks')
+    
+    # Parent Task for Subtasks
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subtasks')
 
     # Soft Delete
     is_deleted = models.BooleanField(default=False)
