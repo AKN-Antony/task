@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LayoutDashboard, ListChecks, LogIn } from "lucide-react";
 import { Chatbot } from "@/components/features/Chatbot";
+import { ModeToggle } from "@/components/features/ModeToggle";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -34,6 +35,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span className="hidden sm:inline">{label}</span>
               </Link>
             ))}
+            <div className="ml-2 pl-2 border-l border-border/50">
+              <ModeToggle />
+            </div>
           </nav>
         </div>
       </header>
