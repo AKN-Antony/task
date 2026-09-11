@@ -56,3 +56,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author} on {self.task}"
+
+class Attachment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='uploaded_files')
+    file = models.FileField(upload_to='task_attachments/%Y/%m/%d/')
+    filename = models.CharField(max_length=255)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.filename} for {self.task.title}"
