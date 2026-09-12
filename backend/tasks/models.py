@@ -29,6 +29,13 @@ class Task(models.Model):
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='assigned_tasks', on_delete=models.SET_NULL, null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='tasks')
     
+    # Project
+    project = models.ForeignKey('projects.Project', on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
+    
+    # Agile / Grouping
+    milestone = models.ForeignKey('projects.Milestone', on_delete=models.SET_NULL, related_name='tasks', null=True, blank=True)
+    sprint = models.ForeignKey('projects.Sprint', on_delete=models.SET_NULL, related_name='tasks', null=True, blank=True)
+    
     # Tags
     tags = models.ManyToManyField('Tag', blank=True, related_name='tasks')
     
@@ -85,3 +92,16 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+class TaskDependency(models.Model):
+    # 'task' cannot start until 'depends_on_task' is completed.
+    task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='depends_on')
+    depends_on_task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='blocks')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('task', 'depends_on_task')
+
+    def __str__(self):
+        return f"{self.task.title} depends on {self.depends_on_task.title}"
