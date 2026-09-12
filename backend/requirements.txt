@@ -5,3 +5,5 @@ django-cors-headers>=4.3.0
 drf-yasg>=1.21.7
 psycopg>=3.1.18
 psycopg-binary>=3.1.18
+djangorestframework-simplejwt>=5.3.1
+django-filter>=23.5

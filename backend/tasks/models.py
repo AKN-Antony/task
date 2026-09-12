@@ -29,6 +29,9 @@ class Task(models.Model):
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='assigned_tasks', on_delete=models.SET_NULL, null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='tasks')
     
+    # Tags
+    tags = models.ManyToManyField('Tag', blank=True, related_name='tasks')
+    
     # Parent Task for Subtasks
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subtasks')
 
@@ -68,3 +71,17 @@ class Attachment(models.Model):
 
     def __str__(self):
         return f"{self.filename} for {self.task.title}"
+
+class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=20, default="#808080")
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='tags')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('name', 'organization')
+
+    def __str__(self):
+        return self.name
