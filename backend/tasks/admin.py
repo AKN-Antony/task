@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, Comment, Attachment, Tag
+from .models import Task, Comment, Attachment, Tag, TaskDependency
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
@@ -21,3 +21,7 @@ class AttachmentAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'organization', 'created_at')
     search_fields = ('name', 'organization__name')
+
+@admin.register(TaskDependency)
+class TaskDependencyAdmin(admin.ModelAdmin):
+    list_display = ('task', 'depends_on_task', 'created_at')
