@@ -49,6 +49,13 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['organization', 'status']),
+            models.Index(fields=['assignee', 'status']),
+            models.Index(fields=['is_deleted']),
+        ]
+
     def __str__(self):
         return self.title
 
