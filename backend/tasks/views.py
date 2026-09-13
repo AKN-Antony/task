@@ -37,4 +37,22 @@ class TagViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(organization=self.request.user.organization)
 
-# (Comment and Attachment views can be nested or act independently. We will add them next if needed).
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return Comment.objects.filter(task__organization=self.request.user.organization)
+
+    def perform_create(self, serializer):
+        # We expect 'task_id' to be passed in the request data, or we could handle nested routing.
+        # Let's assume standard routing where task is passed in payload.
+        serializer.save(author=self.request.user)
+
+class AttachmentViewSet(viewsets.ModelViewSet):
+    serializer_class = AttachmentSerializer
+
+    def get_queryset(self):
+        return Attachment.objects.filter(task__organization=self.request.user.organization)
+
+    def perform_create(self, serializer):
+        serializer.save(uploader=self.request.user)
