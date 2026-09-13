@@ -14,7 +14,10 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Only return non-deleted tasks for the user's organization
-        return Task.objects.filter(is_deleted=False, organization=self.request.user.organization)
+        return Task.objects.select_related('creator', 'assignee', 'organization', 'project').prefetch_related('tags', 'comments', 'attachments').filter(
+            is_deleted=False, 
+            organization=self.request.user.organization
+        )
 
     def perform_create(self, serializer):
         serializer.save(
