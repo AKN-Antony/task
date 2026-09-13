@@ -46,3 +46,13 @@ def generate_weekly_reports():
     logger.info("Generating weekly reports...")
     # Implementation logic for weekly reports goes here.
     pass
+
+@shared_task
+def purge_old_audit_logs():
+    """
+    Data retention policy: Auto-purge audit logs older than 90 days.
+    """
+    from audit.models import AuditLog
+    ninety_days_ago = timezone.now() - timedelta(days=90)
+    count, _ = AuditLog.objects.filter(timestamp__lte=ninety_days_ago).delete()
+    logger.info(f"Purged {count} old audit logs.")
