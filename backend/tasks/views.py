@@ -1,5 +1,7 @@
 from django.utils import timezone
 from rest_framework import viewsets, permissions, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Task, Tag, Comment, Attachment
 from .serializers import TaskSerializer, TagSerializer, CommentSerializer, AttachmentSerializer
@@ -30,6 +32,31 @@ class TaskViewSet(viewsets.ModelViewSet):
         instance.is_deleted = True
         instance.deleted_at = timezone.now()
         instance.save()
+
+    @action(detail=False, methods=['post'])
+    def ai_smart_prioritize(self, request):
+        """
+        Phase 14: AI/ML Enhancements.
+        Simulated endpoint that uses a hypothetical ML model to auto-assign 
+        priorities to the user's unprioritized tasks based on NLP/text analysis of the title.
+        """
+        tasks = self.get_queryset().filter(priority='LOW')
+        # Here we would call our ML microservice or OpenAI API
+        # For now, we simulate an AI decision engine:
+        updated_count = 0
+        for task in tasks:
+            if 'urgent' in task.title.lower() or 'asap' in task.title.lower():
+                task.priority = 'URGENT'
+                task.save()
+                updated_count += 1
+            elif 'bug' in task.title.lower():
+                task.priority = 'HIGH'
+                task.save()
+                updated_count += 1
+                
+        return Response({
+            "message": f"AI Engine successfully analyzed open tasks and reprioritized {updated_count} items."
+        })
 
 class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagSerializer
