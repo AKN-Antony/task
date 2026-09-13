@@ -38,4 +38,5 @@ urlpatterns += [
     path('api/v1/', include('projects.urls')),
     path('api/v1/', include('workflows.urls')),
     path('api/v1/', include('notifications.urls')),
+    path('api/v1/', include('reports.urls')),
 ]
