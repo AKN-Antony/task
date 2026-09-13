@@ -55,3 +55,25 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.email} ({self.role})"
+
+import secrets
+
+class APIKey(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, help_text="e.g. Zapier, GitHub Action")
+    key = models.CharField(max_length=64, unique=True, editable=False)
+    
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='api_keys')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_api_keys')
+    
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = secrets.token_urlsafe(40)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.organization.name})"
