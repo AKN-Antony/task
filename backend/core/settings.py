@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'notifications',
     'reports',
     'audit',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,11 @@ REST_FRAMEWORK['DEFAULT_FILTER_BACKENDS'] = [
     'rest_framework.filters.SearchFilter',
     'rest_framework.filters.OrderingFilter',
 ]
+
+# API Versioning Strategy
+REST_FRAMEWORK['DEFAULT_VERSIONING_CLASS'] = 'rest_framework.versioning.NamespaceVersioning'
+REST_FRAMEWORK['DEFAULT_VERSION'] = 'v1'
+REST_FRAMEWORK['ALLOWED_VERSIONS'] = ['v1', 'v2']
 
 # --- PHASE 9: Performance & Scalability ---
 
