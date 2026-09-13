@@ -8,3 +8,5 @@ psycopg-binary>=3.1.18
 djangorestframework-simplejwt>=5.3.1
 django-filter>=23.5
 sentry-sdk>=1.39.1
+celery>=5.3.6
+redis>=5.0.1

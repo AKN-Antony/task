@@ -1,6 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.conf import settings
 
 class Role(models.TextChoices):
     ADMIN = 'ADMIN', 'Admin'
