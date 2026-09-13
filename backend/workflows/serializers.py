@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Workflow, WorkflowStage, TransitionRule
+from .models import Workflow, WorkflowStage, TransitionRule, AutomationRule, Webhook
 
 class WorkflowStageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +21,15 @@ class WorkflowSerializer(serializers.ModelSerializer):
         model = Workflow
         fields = '__all__'
         read_only_fields = ('organization', 'created_at', 'updated_at')
+
+class AutomationRuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutomationRule
+        fields = '__all__'
+        read_only_fields = ('organization', 'created_at')
+
+class WebhookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Webhook
+        fields = '__all__'
+        read_only_fields = ('organization', 'created_at')
