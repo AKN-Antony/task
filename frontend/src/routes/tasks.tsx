@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { TaskCard } from "@/components/features/TaskCard";
 import { Input } from "@/components/ui/input";
 import {
-  MOCK_TASKS,
+  fetchTasks,
   PRIORITIES,
   STATUSES,
   type Priority,
   type Status,
+  type Task
 } from "@/server/tasks";
 import { cn } from "@/lib/utils";
 
@@ -74,19 +75,33 @@ function TasksPage() {
   const [status, setStatus] = useState<Status | "All">("All");
   const [priority, setPriority] = useState<Priority | "All">("All");
   const [search, setSearch] = useState("");
+  const [serverTasks, setServerTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTasks()
+      .then(data => {
+        setServerTasks(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const tasks = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return MOCK_TASKS.filter(
+    return serverTasks.filter(
       (t) =>
         (status === "All" || t.status === status) &&
         (priority === "All" || t.priority === priority) &&
         (q === "" ||
           t.title.toLowerCase().includes(q) ||
           t.description.toLowerCase().includes(q) ||
-          t.assigned_user.full_name.toLowerCase().includes(q)),
+          (t.assignee_name && t.assignee_name.toLowerCase().includes(q))),
     );
-  }, [status, priority, search]);
+  }, [status, priority, search, serverTasks]);
 
   return (
     <AppShell>
@@ -94,7 +109,7 @@ function TasksPage() {
         All tasks
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {tasks.length} of {MOCK_TASKS.length} tasks shown
+        {isLoading ? "Loading tasks..." : `${tasks.length} of ${serverTasks.length} tasks shown`}
       </p>
 
       <div className="mt-8 space-y-4 rounded-xl border border-border/70 bg-card p-5">
