@@ -15,7 +15,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       })
       .then(r => r.json())
       .then(data => {
-        if (data.email) setUserEmail(data.email);
+        if (data.email) {
+          const name = [data.first_name, data.last_name].filter(Boolean).join(" ");
+          setUserEmail(name || data.email.split("@")[0]);
+        }
       })
       .catch(() => {});
     }
