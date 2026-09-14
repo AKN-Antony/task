@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -8,7 +9,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { TaskCard } from "@/components/features/TaskCard";
-import { MOCK_TASKS, isOverdue, taskStats } from "@/server/tasks";
+import { fetchTasks, isOverdue, taskStats, type Task } from "@/server/tasks";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -67,13 +68,29 @@ function StatCard({
 }
 
 function Dashboard() {
-  const stats = taskStats(MOCK_TASKS);
+  const [serverTasks, setServerTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTasks()
+      .then(data => {
+        setServerTasks(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const stats = taskStats(serverTasks);
   const priorityRows = [
-    { label: "High", value: stats.byPriority.High, bar: "bg-danger" },
-    { label: "Medium", value: stats.byPriority.Medium, bar: "bg-warning" },
-    { label: "Low", value: stats.byPriority.Low, bar: "bg-accent" },
+    { label: "Urgent", value: stats.byPriority.URGENT, bar: "bg-danger" },
+    { label: "High", value: stats.byPriority.HIGH, bar: "bg-danger" },
+    { label: "Medium", value: stats.byPriority.MEDIUM, bar: "bg-warning" },
+    { label: "Low", value: stats.byPriority.LOW, bar: "bg-accent" },
   ];
-  const attention = MOCK_TASKS.filter(isOverdue).slice(0, 4);
+  const attention = serverTasks.filter(isOverdue).slice(0, 4);
 
   return (
     <AppShell>
@@ -158,7 +175,9 @@ function Dashboard() {
             Needs attention
           </h2>
           <div className="mt-5 grid gap-4">
-            {attention.length > 0 ? (
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading tasks...</p>
+            ) : attention.length > 0 ? (
               attention.map((task) => <TaskCard key={task.id} task={task} />)
             ) : (
               <p className="text-sm text-muted-foreground">
