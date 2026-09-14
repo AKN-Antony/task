@@ -1,11 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { TaskCard } from "@/components/features/TaskCard";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
 import {
   fetchTasks,
+  createTask,
   PRIORITIES,
   STATUSES,
   type Priority,
@@ -77,8 +90,11 @@ function TasksPage() {
   const [search, setSearch] = useState("");
   const [serverTasks, setServerTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
+  const loadTasks = () => {
+    setIsLoading(true);
     fetchTasks()
       .then(data => {
         setServerTasks(data);
@@ -88,7 +104,31 @@ function TasksPage() {
         console.error(err);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadTasks();
   }, []);
+
+  const handleCreateTask = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.currentTarget;
+    const title = (form.elements.namedItem("title") as HTMLInputElement).value;
+    const description = (form.elements.namedItem("description") as HTMLTextAreaElement)?.value || "";
+    const priorityVal = (form.elements.namedItem("priority") as HTMLSelectElement).value as Priority;
+    
+    try {
+      await createTask({ title, description, priority: priorityVal });
+      toast.success("Task created successfully!");
+      setIsDialogOpen(false);
+      loadTasks(); // reload the list
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const tasks = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -105,12 +145,66 @@ function TasksPage() {
 
   return (
     <AppShell>
-      <h1 className="font-display text-3xl font-semibold tracking-tight">
-        All tasks
-      </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {isLoading ? "Loading tasks..." : `${tasks.length} of ${serverTasks.length} tasks shown`}
-      </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-semibold tracking-tight">
+            All tasks
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {isLoading ? "Loading tasks..." : `${tasks.length} of ${serverTasks.length} tasks shown`}
+          </p>
+        </div>
+        
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="size-4" />
+              New task
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <form onSubmit={handleCreateTask}>
+              <DialogHeader>
+                <DialogTitle>Create new task</DialogTitle>
+                <DialogDescription>
+                  Add a new task to your team's backlog.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" required placeholder="Fix the navbar layout" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <textarea
+                    id="description"
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Steps to reproduce..."
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <select
+                    id="priority"
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Save changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <div className="mt-8 space-y-4 rounded-xl border border-border/70 bg-card p-5">
         <div className="relative">
