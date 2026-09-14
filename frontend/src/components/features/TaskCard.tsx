@@ -3,15 +3,19 @@ import { type Task, formatDue, isOverdue } from "@/server/tasks";
 import { cn } from "@/lib/utils";
 
 const priorityClass: Record<Task["priority"], string> = {
-  High: "bg-danger-soft text-danger",
-  Medium: "bg-warning-soft text-warning",
-  Low: "bg-secondary text-muted-foreground",
+  URGENT: "bg-danger-soft text-danger font-bold",
+  HIGH: "bg-danger-soft text-danger",
+  MEDIUM: "bg-warning-soft text-warning",
+  LOW: "bg-secondary text-muted-foreground",
 };
 
 const statusClass: Record<Task["status"], string> = {
-  Pending: "bg-secondary text-muted-foreground",
-  "In Progress": "bg-accent-soft text-accent",
-  Completed: "bg-success-soft text-success",
+  BACKLOG: "bg-secondary/50 text-muted-foreground",
+  TODO: "bg-secondary text-muted-foreground",
+  IN_PROGRESS: "bg-accent-soft text-accent",
+  REVIEW: "bg-warning-soft text-warning",
+  DONE: "bg-success-soft text-success",
+  ARCHIVED: "bg-secondary/50 text-muted-foreground line-through",
 };
 
 export function TaskCard({ task }: { task: Task }) {
@@ -61,7 +65,7 @@ export function TaskCard({ task }: { task: Task }) {
         </span>
         <span className="flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-medium text-muted-foreground">
           <User2 className="size-3.5" />
-          {task.assigned_user.full_name}
+          {task.assignee_name || "Unassigned"}
         </span>
       </div>
     </article>
