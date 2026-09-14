@@ -31,4 +31,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
         )
+        
+        # Create a default organization for the new user
+        org_name = f"{user.first_name}'s Workspace" if user.first_name else f"{user.email.split('@')[0]}'s Workspace"
+        org = Organization.objects.create(name=org_name)
+        user.organization = org
+        user.save(update_fields=['organization'])
+        
         return user
