@@ -40,8 +40,28 @@ export async function fetchTasks(): Promise<Task[]> {
   }
   
   const data = await res.json();
-  // drf PageNumberPagination returns { count, next, previous, results }
   return data.results || data;
+}
+
+export async function createTask(payload: Partial<Task>): Promise<Task> {
+  const token = localStorage.getItem("access");
+  if (!token) throw new Error("Not logged in");
+
+  const res = await fetch("http://localhost:8000/api/v1/tasks/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.detail || "Failed to create task");
+  }
+
+  return res.json();
 }
 
 export function formatDue(iso: string | null) {
