@@ -66,10 +66,16 @@ function LoginPage() {
                 }
               } else {
                 // Register
+                const nameField = form.elements.namedItem('name') as HTMLInputElement | null;
+                const fullName = nameField ? nameField.value.trim() : "";
+                const nameParts = fullName.split(' ');
+                const first_name = nameParts[0] || "";
+                const last_name = nameParts.slice(1).join(' ') || "";
+
                 const res = await fetch('http://localhost:8000/api/v1/auth/register/', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email, password })
+                  body: JSON.stringify({ email, password, first_name, last_name })
                 });
                 const data = await res.json();
                 if (res.ok) {
