@@ -43,9 +43,45 @@ function LoginPage() {
 
         <form
           className="mt-8 space-y-4 rounded-xl border border-border/70 bg-card p-6"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            toast.info("This screen is not connected to a server yet.");
+            const form = e.target as HTMLFormElement;
+            const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+            const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+            
+            try {
+              if (mode === 'login') {
+                const res = await fetch('http://localhost:8000/api/v1/auth/login/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  localStorage.setItem('access', data.access);
+                  toast.success('Logged in successfully!');
+                  window.location.href = '/tasks'; // Simple redirect for now
+                } else {
+                  toast.error(data.detail || 'Login failed.');
+                }
+              } else {
+                // Register
+                const res = await fetch('http://localhost:8000/api/v1/auth/register/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  toast.success('Account created! Please sign in.');
+                  setMode('login');
+                } else {
+                  toast.error(JSON.stringify(data));
+                }
+              }
+            } catch (error) {
+              toast.error('Network error connecting to the server.');
+            }
           }}
         >
           {mode === "register" && (
