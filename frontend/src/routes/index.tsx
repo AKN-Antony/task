@@ -21,14 +21,6 @@ export const Route = createFileRoute("/")({
         content:
           "See total, completed and overdue tasks at a glance, with a live breakdown by priority.",
       },
-      { property: "og:title", content: "Taskline — Team task dashboard" },
-      {
-        property: "og:description",
-        content:
-          "See total, completed and overdue tasks at a glance, with a live breakdown by priority.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -71,7 +63,8 @@ function Dashboard() {
   const [serverTasks, setServerTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const loadTasks = () => {
+    setIsLoading(true);
     fetchTasks()
       .then(data => {
         setServerTasks(data);
@@ -81,6 +74,10 @@ function Dashboard() {
         console.error(err);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadTasks();
   }, []);
 
   const stats = taskStats(serverTasks);
@@ -178,7 +175,7 @@ function Dashboard() {
             {isLoading ? (
               <p className="text-sm text-muted-foreground">Loading tasks...</p>
             ) : attention.length > 0 ? (
-              attention.map((task) => <TaskCard key={task.id} task={task} />)
+              attention.map((task) => <TaskCard key={task.id} task={task} onUpdate={loadTasks} />)
             ) : (
               <p className="text-sm text-muted-foreground">
                 Nothing overdue. Nice.
