@@ -38,17 +38,38 @@ export function Chatbot() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    // Simulate bot response
+    // Simulate a highly trained, strict bot that prevents hallucination
     setTimeout(() => {
+      let botResponse = "";
+      const lowerInput = userMessage.content.toLowerCase();
+
+      // "Training" data & rules
+      if (lowerInput.includes("create task") || lowerInput.includes("add task") || lowerInput.includes("new task")) {
+        botResponse = "To create a task, navigate to the Tasks page and click the 'New task' button in the top right corner. You can set the title, description, priority, and due date there.";
+      } 
+      else if (lowerInput.includes("status") || lowerInput.includes("move task") || lowerInput.includes("progress")) {
+        botResponse = "You can change a task's status (BACKLOG, TODO, IN_PROGRESS, REVIEW, DONE, ARCHIVED) by clicking the three-dot menu (...) on any task card and selecting 'Change Status'.";
+      }
+      else if (lowerInput.includes("delete")) {
+        botResponse = "To delete a task, open the three-dot action menu on the task card and click 'Delete Task'. You will be asked to confirm before it is permanently removed.";
+      }
+      else if (lowerInput.includes("priority")) {
+        botResponse = "Tasks can have one of four priorities: URGENT, HIGH, MEDIUM, and LOW. Urgent and High tasks will be highlighted in red.";
+      }
+      else if (lowerInput.includes("hello") || lowerInput.includes("hi") || lowerInput.includes("hey")) {
+        botResponse = "Hello! I am the Taskline Assistant. I am strictly trained to answer questions about using this platform (creating tasks, changing statuses, etc.). How can I help?";
+      }
+      else {
+        botResponse = "I am a highly constrained task management assistant. To prevent hallucination, I only answer questions related to managing tasks, projects, and workflows on this platform. Could you please rephrase your question to be about Taskline?";
+      }
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "bot",
-        content:
-          "I'm a simple demo bot! I received your message: " +
-          userMessage.content,
+        content: botResponse,
       };
       setMessages((prev) => [...prev, botMessage]);
-    }, 1000);
+    }, 600);
   };
 
   return (
